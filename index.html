@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HexShield | Niche Security Tools — Headers Check + Contract Auditor</title>
+<meta name="description" content="Free niche security tools for developers: Security Headers Check and Smart Contract Auditor. 100% client-side.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Consolas,monospace}
+:root{--bg:#0b0f1a;--panel:#131a2b;--line:#24304d;--grn:#34d399;--red:#f87171;--ylw:#fbbf24;--blu:#60a5fa;--txt:#dbe4f3;--mut:#8b98b8}
+body{background:var(--bg);color:var(--txt)}
+header{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.logo{font-size:22px;font-weight:900;color:var(--grn)}
+.logo small{display:block;font-size:11px;color:var(--mut);font-weight:400}
+header select{margin-left:auto;background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:14px;padding:7px 10px;font-size:13px}
+.tabs{display:flex;gap:8px;padding:14px 20px 0}
+.tabs button{flex:1;max-width:320px;background:var(--panel);color:var(--txt);border:1px solid var(--line);border-bottom:none;padding:12px;border-radius:12px 12px 0 0;cursor:pointer;font-weight:800;font-size:14px}
+.tabs button.on{background:#1a2340;color:var(--grn)}
+main{max-width:1000px;margin:0 auto;padding:18px 15px 60px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:0 14px 14px 14px;padding:22px;display:none}
+.panel.on{display:block}
+.panel h2{color:var(--grn);margin-bottom:6px;font-size:20px}
+.panel p.sub{color:var(--mut);font-size:13.5px;margin-bottom:14px;line-height:1.7}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+input[type=text],textarea,select{background:#0b0f1a;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:11px 14px;font-size:13.5px;outline:none}
+input[type=text]{flex:1;min-width:200px;direction:ltr}
+textarea{width:100%;min-height:220px;font-family:Consolas,monospace;font-size:12.5px;direction:ltr}
+button.go{background:var(--grn);color:#06281c;border:none;padding:11px 24px;border-radius:10px;font-weight:900;cursor:pointer;font-size:14px}
+button.alt{background:transparent;color:var(--blu);border:1px solid var(--blu);padding:10px 18px;border-radius:10px;cursor:pointer;font-size:13px}
+button.go:hover{filter:brightness(1.1)}
+.note{background:#1a2340;border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:12.5px;color:var(--mut);margin:10px 0;line-height:1.7}
+.note b{color:var(--ylw)}
+.grade{display:flex;align-items:center;gap:16px;margin:16px 0;flex-wrap:wrap}
+.badge{font-size:44px;font-weight:900;width:96px;height:96px;border-radius:20px;display:flex;align-items:center;justify-content:center;border:3px solid}
+.gA{color:var(--grn);border-color:var(--grn)} .gB{color:var(--blu);border-color:var(--blu)} .gC{color:var(--ylw);border-color:var(--ylw)} .gF{color:var(--red);border-color:var(--red)}
+.check{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;font-size:13.5px}
+.check .hd{display:flex;gap:10px;align-items:center;font-weight:800}
+.dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.p{background:var(--grn)} .w{background:var(--ylw)} .f{background:var(--red)}
+.check small{color:var(--mut);display:block;margin-top:4px;line-height:1.6}
+.check code{display:block;background:#0b0f1a;border-radius:8px;padding:8px;margin-top:6px;font-size:12px;color:var(--grn);direction:ltr;text-align:left;white-space:pre-wrap}
+.find{border-left:4px solid;padding:12px 14px;margin:8px 0;background:#0b0f1a;border-radius:0 10px 10px 0;font-size:13px}
+.find.high{border-color:var(--red)} .find.med{border-color:var(--ylw)} .find.low{border-color:var(--blu)}
+.find .t{font-weight:800}
+.find .sev{font-size:11px;font-weight:900;padding:2px 9px;border-radius:9px;margin-left:8px}
+.high .sev{background:#3f1d1d;color:var(--red)} .med .sev{background:#3a2c10;color:var(--ylw)} .low .sev{background:#16283f;color:var(--blu)}
+.find code{display:block;margin-top:6px;font-size:12px;color:var(--ylw);direction:ltr;text-align:left;white-space:pre-wrap}
+.find .fx{margin-top:6px;font-size:12.5px;color:var(--grn)}
+.find .ln{color:var(--mut);font-size:11.5px}
+.okbox{background:#0e2a1d;border:1px solid var(--grn);border-radius:12px;padding:14px;margin:10px 0;font-size:13.5px}
+footer{text-align:center;color:var(--mut);font-size:12.5px;padding:26px 16px;border-top:1px solid var(--line);line-height:1.9}
+footer a{color:var(--grn)}
+.adslot{max-width:1000px;margin:12px auto 0;padding:0 15px;text-align:center}
+.adslot .ph{display:block;border:1px dashed var(--line);border-radius:10px;color:var(--mut);font-size:12px;padding:10px}
+.prices{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:12px}
+.price{background:#0b0f1a;border:1px solid var(--grn);border-radius:14px;padding:20px;text-align:center}
+.price .amt{font-size:32px;font-weight:900;color:var(--grn)}
+.price ul{list-style:none;font-size:13px;margin:10px 0;line-height:2}
+.price small{color:var(--mut)}
+#payModal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;z-index:100;align-items:center;justify-content:center}
+#payModal.show{display:flex}
+#payBody{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;width:min(480px,92vw);max-height:88vh;overflow:auto}
+.addrbox{background:#0b0f1a;border-radius:10px;padding:10px;font-family:monospace;font-size:12px;word-break:break-all;direction:ltr;margin:8px 0;color:var(--grn)}
+.mrow{display:flex;gap:8px;margin:8px 0}
+.mrow button{flex:1;background:transparent;color:var(--blu);border:1px solid var(--blu);border-radius:10px;padding:10px;cursor:pointer;font-weight:800}
+.mrow button.on{background:var(--blu);color:#06121f}
+#printArea{display:none}
+@media print{body>*{display:none!important}#printArea{display:block!important}.pr-doc{font-family:Arial,sans-serif;color:#000}.pr-doc code{background:#eee;display:block;padding:8px;white-space:pre-wrap;font-size:12px}.pr-doc h2{margin:12px 0 6px}}
+[dir="rtl"] input[type=text]{text-align:right}
+@media(max-width:640px){.tabs button{font-size:12px}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">🛡️ HexShield<small data-i="tag"></small></div>
+<select id="langSel" onchange="setLang(this.value)">
+<option value="en" selected>🇬🇧 English</option><option value="tr">🇹🇷 Türkçe</option><option value="ar">🇸🇦 العربية</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="es">🇪🇸 Español</option>
+</select>
+</header>
+<div class="tabs">
+<button id="tabH" class="on" onclick="tab('H')">🔒 <span data-i="tabH"></span></button>
+<button id="tabC" onclick="tab('C')">📜 <span data-i="tabC"></span></button>
+<button id="tabP" onclick="tab('P')">💎 <span>Pro</span></button>
+</div>
+<div class="adslot" id="adTop"><span class="ph" data-i="adHere"></span></div>
+<main>
+<section class="panel on" id="pH">
+<h2 data-i="hT"></h2>
+<p class="sub" data-i="hS"></p>
+<div class="row"><input type="text" id="urlIn" placeholder="https://example.com"><button class="go" onclick="autoCheck()" data-i="btnScan"></button></div>
+<div class="note" data-i="proxyNote"></div>
+<div class="row"><button class="alt" onclick="fillCurl()" data-i="curlBtn"></button></div>
+<div id="curlBox"></div>
+<p class="sub" data-i="orManual" style="margin-top:14px"></p>
+<textarea id="hdrIn" rows="6" placeholder="strict-transport-security: max-age=63072000&#10;content-security-policy: default-src 'self'&#10;..."></textarea>
+<div class="row"><button class="go" onclick="manualCheck()" data-i="btnAnalyze"></button></div>
+<div id="hRes"></div>
+</section>
+<section class="panel" id="pC">
+<h2 data-i="cT"></h2>
+<p class="sub" data-i="cS"></p>
+<div class="row">
+<button class="alt" onclick="loadDemo()" data-i="btnDemo"></button>
+<label class="alt" style="cursor:pointer"><span data-i="btnUpload"></span><input type="file" id="fileIn" accept=".sol,.txt" style="display:none" onchange="loadFile(this)"></label>
+<button class="go" onclick="runAudit()" data-i="btnAudit"></button>
+</div>
+<textarea id="codeIn" rows="14" placeholder="pragma solidity ^0.8.0;&#10;contract ..."></textarea>
+<div class="row"><button class="alt" onclick="dlReport()" id="dlBtn" style="display:none" data-i="dlBtn"></button></div>
+<div id="cRes"></div>
+<section class="panel" id="pP">
+<h2 data-i="proT"></h2>
+<p class="sub" data-i="proSub"></p>
+<div class="prices">
+<div class="price"><b>🔒 Headers Pro</b><div class="amt">$5</div><small id="prH"></small>
+<ul><li data-i="proHd"></li><li data-i="pf1"></li><li data-i="pf2"></li><li data-i="pf3"></li></ul>
+<div class="row" style="justify-content:center"><button class="go" onclick="buyPro('headers')"><span data-i="buyBtn"></span> $5</button><button class="alt" onclick="openPro('headers')"><span data-i="proOpen"></span></button></div></div>
+<div class="price"><b>📜 Contract Pro</b><div class="amt">$9</div><small id="prC"></small>
+<ul><li data-i="proCd"></li><li data-i="pf1"></li><li data-i="pf2"></li><li data-i="pf3"></li></ul>
+<div class="row" style="justify-content:center"><button class="go" onclick="buyPro('contract')"><span data-i="buyBtn"></span> $9</button><button class="alt" onclick="openPro('contract')"><span data-i="proOpen"></span></button></div></div>
+</div>
+<div id="proView"></div>
+</section>
+</main>
+<div id="payModal"><div id="payBody"></div></div>
+<div id="printArea"></div>
+<footer><span data-i="foot"></span><br><a href="README.md" target="_blank">README</a> · MIT · <a href="#" onclick="ownerView(event)" data-i="ownerL"></a></footer>
+<script>
+const T={
+tr:{tag:'Niş güvenlik araçları — %100 istemci-içi',tabH:'Headers Check',tabC:'Kontrat Denetimi',
+hT:'🔒 Güvenlik Başlıkları Denetimi',hS:'Sitenizin HTTP güvenlik başlıklarını puanlar. Hiçbir veri sunucuya gitmez — her şey tarayıcınızda çalışır.',
+btnScan:'Tara',proxyNote:'<b>Not:</b> Otomatik tarama, CORS kısıtı yüzünden herkese açık bir proxy üzerinden görünür başlıkları okur. Bazı başlıklar (örn. <b>Set-Cookie</b>) tarayıcıda asla görünmez — tam sonuç için cURL çıktınızı aşağıdaki kutuya yapıştırın.',
+curlBtn:'cURL komutunu göster',orManual:'veya yanıt başlıklarını elle yapıştırın:',btnAnalyze:'Analiz Et',
+gradeL:'Not',fixL:'Öneri',dlBtn:'Raporu indir (.md)',
+c_https:'HTTPS kullanımı',c_hsts:'Strict-Transport-Security (HSTS)',c_csp:'Content-Security-Policy (CSP)',c_xfo:'X-Frame-Options',c_xcto:'X-Content-Type-Options',c_ref:'Referrer-Policy',c_perm:'Permissions-Policy',c_coop:'Cross-Origin (COOP/COEP/CORP)',c_leak:'Bilgi sızıntısı başlıkları',
+st_p:'GEÇTİ',st_w:'ZAYIF',st_f:'EKSİK',
+cT:'📜 Akıllı Kontrat Denetimi (Solidity)',cS:'Solidity kodunuzu yapıştırın veya yükleyin — 11 yaygın zafiyet kalıbı satır satır taranır. Bu otomatik ön taramadır; mainnet öncesi profesyonel denetim (OpenZeppelin, Trail of Bits vb.) şarttır.',
+btnDemo:'Örnek zafiyetli kontrat yükle',btnUpload:'Dosya yükle (.sol)',btnAudit:'Denetle',
+verdict:'Karar',sev_high:'KRİTİK',sev_med:'ORTA',sev_low:'DÜŞÜK',found:'bulgu',clean:'Temiz! Bilinen kalıp bulunamadı — yine de profesyonel denetim önerilir.',
+foot:'HexShield — savunma amaçlı ücretsiz araçlar. Taranan kod/veriler cihazınızdan çıkmaz.',
+curlCmd:'curl -sI https://siteniz.com',copied:'Kopyalandı ✅',needUrl:'Önce geçerli bir URL yazın ⚠️',needCode:'Önce kod yapıştırın ⚠️',scanning:'Taranıyor...',fetchFail:'Otomatik okuma başarısız oldu (site/proxy engeli). cURL çıktısını kutuya yapıştırın.',adHere:'Reklamınız burada — iletişim için tıklayın',proT:'💎 Pro Raporlar',proSub:'Hızlı özet ücretsiz. Derinlemesine yazdırılabilir rapor + adım adım düzeltmeler — tek ödeme.',proHd:'Öncelikli yol haritası + nginx/Apache/Cloudflare yapılandırmaları',proCd:'Risk planı + denetçiye hazır çıktı',pf1:'PDF indir / yazdır',pf2:'Adım adım düzeltmeler',pf3:'Tek ödeme',buyBtn:'Satın Al — $',payM:'Ödeme: BTC veya USDT',setupPay:'USDT adresi yakında — şimdilik BTC ile ödeyin.',txPh2:'TXID (ödeme kanıtı)',unlockBtn:'Ödemeyi Yaptım — Kilidi Aç',proOpen:'Pro Raporu Aç',printBtn:'Yazdır / PDF',lockedMsg:'Pro rapor kilitli — önce kilidi açın.',liveL:'canlı kur',ownerL:'Owner',ownerPh:'Şifre',noSales:'Henüz satış yok.',needScan:'Önce tarama yapın ⚠️',verifyL:'Doğrulama',},
+ar:{tag:'أدوات أمنية متخصصة — تعمل في متصفحك',tabH:'فحص الترويسات',tabC:'تدقيق العقود',
+hT:'🔒 فحص ترويسات الأمان',hS:'يقيّم ترويسات HTTP الأمنية لموقعك. لا تغادر أي بيانات جهازك — كل شيء يعمل في المتصفح.',
+btnScan:'افحص',proxyNote:'<b>ملاحظة:</b> الفحص التلقائي يقرأ الترويسات الظاهرة عبر وسيط عام بسبب قيود CORS. بعض الترويسات (مثل <b>Set-Cookie</b>) لا تظهر أبداً في المتصفح — للنتيجة الكاملة الصق ناتج cURL أدناه.',
+curlBtn:'عرض أمر cURL',orManual:'أو الصق ترويسات الاستجابة يدوياً:',btnAnalyze:'حلّل',
+gradeL:'التقييم',fixL:'التوصية',dlBtn:'تنزيل التقرير (.md)',
+c_https:'استخدام HTTPS',c_hsts:'Strict-Transport-Security',c_csp:'Content-Security-Policy',c_xfo:'X-Frame-Options',c_xcto:'X-Content-Type-Options',c_ref:'Referrer-Policy',c_perm:'Permissions-Policy',c_coop:'Cross-Origin',c_leak:'ترويسات تسريب المعلومات',
+st_p:'سليم',st_w:'ضعيف',st_f:'مفقود',
+cT:'📜 تدقيق العقود الذكية (Solidity)',cS:'الصق كود Solidity أو ارفعه — يُفحص 11 نمط ثغرات شائعاً سطراً بسطر. هذا فحص أولي آلي؛ قبل الشبكة الرئيسية يلزم تدقيق احترافي (OpenZeppelin, Trail of Bits...).',
+btnDemo:'تحميل عقد مصاب للتجربة',btnUpload:'رفع ملف (.sol)',btnAudit:'دقّق',
+verdict:'الحكم',sev_high:'حرجة',sev_med:'متوسطة',sev_low:'منخفضة',found:'ملاحظة',clean:'نظيف! لم تُرصد أنماط معروفة — ومع ذلك نوصي بتدقيق احترافي.',
+foot:'HexShield — أدوات دفاعية مجانية. الكود المفحوص لا يغادر جهازك.',
+curlCmd:'curl -sI https://your-site.com',copied:'تم النسخ ✅',needUrl:'اكتب رابطاً صحيحاً أولاً ⚠️',needCode:'الصق الكود أولاً ⚠️',scanning:'جارٍ الفحص...',fetchFail:'تعذرت القراءة التلقائية. الصق ناتج cURL في الصندوق.',
+adHere:'مساحتك الإعلانية هنا — تواصل معنا',proT:'💎 التقارير الاحترافية',proSub:'الملخص السريع مجاني. التقرير المفصل القابل للطباعة مع إصلاحات خطوة بخطوة — دفعة واحدة.',proHd:'خارطة أولويات + إعدادات nginx/Apache/Cloudflare',proCd:'خطة مخاطر + مخرجات جاهزة للمدقق',pf1:'تنزيل / طباعة PDF',pf2:'إصلاحات خطوة بخطوة',pf3:'دفعة واحدة',buyBtn:'اشترِ — $',payM:'الدفع: بتكوين أو USDT',setupPay:'عنوان USDT قريباً — ادفع بالبتكوين حالياً.',txPh2:'رقم المعاملة (إثبات الدفع)',unlockBtn:'تم الدفع — افتح التقرير',proOpen:'افتح التقرير',printBtn:'طباعة / PDF',lockedMsg:'التقرير مقفل — افتحه أولاً.',liveL:'سعر حي',ownerL:'المالك',ownerPh:'كلمة السر',noSales:'لا مبيعات بعد.',needScan:'افحص أولاً ⚠️',verifyL:'تحقق'},
+en:{tag:'Niche security tools — 100% client-side',tabH:'Headers Check',tabC:'Contract Audit',
+hT:'🔒 Security Headers Check',hS:'Grades your site\u2019s HTTP security headers. No data leaves your device — everything runs in the browser.',
+btnScan:'Scan',proxyNote:'<b>Note:</b> Auto-scan reads visible headers through a public proxy due to CORS. Some headers (e.g. <b>Set-Cookie</b>) are never visible in browsers — paste your cURL output below for full results.',
+curlBtn:'Show cURL command',orManual:'or paste response headers manually:',btnAnalyze:'Analyze',
+gradeL:'Grade',fixL:'Fix',dlBtn:'Download report (.md)',
+c_https:'HTTPS usage',c_hsts:'Strict-Transport-Security (HSTS)',c_csp:'Content-Security-Policy (CSP)',c_xfo:'X-Frame-Options',c_xcto:'X-Content-Type-Options',c_ref:'Referrer-Policy',c_perm:'Permissions-Policy',c_coop:'Cross-Origin (COOP/COEP/CORP)',c_leak:'Info-leak headers',
+st_p:'PASS',st_w:'WEAK',st_f:'MISSING',
+cT:'📜 Smart Contract Audit (Solidity)',cS:'Paste or upload Solidity code — 11 common vulnerability patterns scanned line by line. This is an automated pre-screen; a professional audit (OpenZeppelin, Trail of Bits, etc.) is mandatory before mainnet.',
+btnDemo:'Load demo vulnerable contract',btnUpload:'Upload file (.sol)',btnAudit:'Audit',
+verdict:'Verdict',sev_high:'HIGH',sev_med:'MEDIUM',sev_low:'LOW',found:'findings',clean:'Clean! No known patterns found — a professional audit is still recommended.',
+foot:'HexShield — free defensive tools. Scanned code never leaves your device.',
+curlCmd:'curl -sI https://your-site.com',copied:'Copied ✅',needUrl:'Enter a valid URL first ⚠️',needCode:'Paste code first ⚠️',scanning:'Scanning...',fetchFail:'Auto-read failed (site/proxy blocked). Paste cURL output into the box.',
+adHere:'Advertise here — get in touch',proT:'💎 Pro Reports',proSub:'Quick summary is free. In-depth printable report + step-by-step fixes — one payment.',proHd:'Prioritized roadmap + nginx/Apache/Cloudflare configs',proCd:'Risk plan + auditor-ready export',pf1:'Download / print PDF',pf2:'Step-by-step fixes',pf3:'One-time payment',buyBtn:'Buy — $',payM:'Pay: BTC or USDT',setupPay:'USDT address soon — pay with BTC for now.',txPh2:'TXID (payment proof)',unlockBtn:'I Paid — Unlock',proOpen:'Open Pro Report',printBtn:'Print / PDF',lockedMsg:'Pro report locked — unlock first.',liveL:'live rate',ownerL:'Owner',ownerPh:'Password',noSales:'No sales yet.',needScan:'Scan first ⚠️',verifyL:'Verify'},
+fr:{tag:'Outils de sécurité de niche — 100% côté client',tabH:'En-têtes',tabC:'Audit Contrat',
+hT:'🔒 Vérification des en-têtes de sécurité',hS:'Note les en-têtes HTTP de votre site. Aucune donnée ne quitte votre appareil.',
+btnScan:'Scanner',proxyNote:'<b>Note :</b> le scan auto lit les en-têtes visibles via un proxy public (CORS). Certains en-têtes (ex. <b>Set-Cookie</b>) sont invisibles — collez la sortie cURL ci-dessous.',
+curlBtn:'Afficher la commande cURL',orManual:'ou collez les en-têtes manuellement :',btnAnalyze:'Analyser',
+gradeL:'Note',fixL:'Correctif',dlBtn:'Télécharger (.md)',
+c_https:'Usage HTTPS',c_hsts:'Strict-Transport-Security (HSTS)',c_csp:'Content-Security-Policy (CSP)',c_xfo:'X-Frame-Options',c_xcto:'X-Content-Type-Options',c_ref:'Referrer-Policy',c_perm:'Permissions-Policy',c_coop:'Cross-Origin (COOP/COEP/CORP)',c_leak:'En-têtes de fuite',
+st_p:'OK',st_w:'FAIBLE',st_f:'MANQUANT',
+cT:'📜 Audit de contrats (Solidity)',cS:'Collez ou chargez du Solidity — 11 failles courantes détectées ligne par ligne. Pré-analyse auto ; audit pro obligatoire avant mainnet.',
+btnDemo:'Charger un contrat vulnérable',btnUpload:'Charger un fichier (.sol)',btnAudit:'Auditer',
+verdict:'Verdict',sev_high:'HAUTE',sev_med:'MOYENNE',sev_low:'BASSE',found:'failles',clean:'Propre ! Aucun motif connu — audit pro recommandé quand même.',
+foot:'HexShield — outils défensifs gratuits. Le code scanné ne quitte jamais votre appareil.',
+curlCmd:'curl -sI https://votre-site.com',copied:'Copié ✅',needUrl:'Entrez une URL valide ⚠️',needCode:'Collez du code ⚠️',scanning:'Analyse...',fetchFail:'Lecture auto impossible. Collez la sortie cURL.',
+adHere:'Publicité ici — contactez-nous',proT:'💎 Rapports Pro',proSub:'Résumé gratuit. Rapport détaillé imprimable + correctifs — paiement unique.',proHd:'Feuille de route + configs nginx/Apache/Cloudflare',proCd:'Plan de risques + export auditeur',pf1:'PDF à télécharger/imprimer',pf2:'Correctifs détaillés',pf3:'Paiement unique',buyBtn:'Acheter — $',payM:'Payer : BTC ou USDT',setupPay:'Adresse USDT bientôt — payez en BTC.',txPh2:'TXID (preuve)',unlockBtn:'Payé — Débloquer',proOpen:'Ouvrir le rapport',printBtn:'Imprimer / PDF',lockedMsg:'Rapport verrouillé.',liveL:'taux live',ownerL:'Owner',ownerPh:'Mot de passe',noSales:'Aucune vente.',needScan:'Scannez d\u2019abord ⚠️',verifyL:'Vérifier'},
+de:{tag:'Nischen-Security-Tools — 100% clientseitig',tabH:'Header-Check',tabC:'Contract-Audit',
+hT:'🔒 Sicherheits-Header-Check',hS:'Bewertet die HTTP-Sicherheitsheader Ihrer Seite. Keine Daten verlassen Ihr Gerät.',
+btnScan:'Scannen',proxyNote:'<b>Hinweis:</b> Auto-Scan liest sichtbare Header über einen öffentlichen Proxy (CORS). Manche Header (z. B. <b>Set-Cookie</b>) sind unsichtbar — cURL-Ausgabe unten einfügen.',
+curlBtn:'cURL-Befehl zeigen',orManual:'oder Header manuell einfügen:',btnAnalyze:'Analysieren',
+gradeL:'Note',fixL:'Fix',dlBtn:'Bericht laden (.md)',
+c_https:'HTTPS-Nutzung',c_hsts:'Strict-Transport-Security (HSTS)',c_csp:'Content-Security-Policy (CSP)',c_xfo:'X-Frame-Options',c_xcto:'X-Content-Type-Options',c_ref:'Referrer-Policy',c_perm:'Permissions-Policy',c_coop:'Cross-Origin (COOP/COEP/CORP)',c_leak:'Leak-Header',
+st_p:'OK',st_w:'SCHWACH',st_f:'FEHLT',
+cT:'📜 Smart-Contract-Audit (Solidity)',cS:'Solidity einfügen oder laden — 11 Schwachstellenmuster zeilenweise. Auto-Prescreen; Profi-Audit vor Mainnet Pflicht.',
+btnDemo:'Verwundbaren Demo-Vertrag laden',btnUpload:'Datei laden (.sol)',btnAudit:'Prüfen',
+verdict:'Urteil',sev_high:'HOCH',sev_med:'MITTEL',sev_low:'NIEDRIG',found:'Funde',clean:'Sauber! Keine Muster — Profi-Audit trotzdem empfohlen.',
+foot:'HexShield — kostenlose defensive Tools. Code verlässt Ihr Gerät nie.',
+curlCmd:'curl -sI https://ihre-seite.de',copied:'Kopiert ✅',needUrl:'Gültige URL eingeben ⚠️',needCode:'Code einfügen ⚠️',scanning:'Scanne...',fetchFail:'Auto-Lesen fehlgeschlagen. cURL-Ausgabe einfügen.',adHere:'Hier werben — Kontakt',proT:'💎 Pro-Berichte',proSub:'Kurzfassung gratis. Detail-PDF + Schritt-Fixes — Einmalzahlung.',proHd:'Roadmap + nginx/Apache/Cloudflare-Configs',proCd:'Risikoplan + Auditor-Export',pf1:'PDF-Download/Druck',pf2:'Schritt-Fixes',pf3:'Einmalzahlung',buyBtn:'Kaufen — $',payM:'Zahlen: BTC oder USDT',setupPay:'USDT-Adresse bald — vorerst BTC.',txPh2:'TXID (Nachweis)',unlockBtn:'Bezahlt — Entsperren',proOpen:'Pro-Bericht öffnen',printBtn:'Drucken / PDF',lockedMsg:'Bericht gesperrt — zuerst entsperren.',liveL:'Live-Kurs',ownerL:'Owner',ownerPh:'Passwort',noSales:'Keine Verkäufe.',needScan:'Erst scannen ⚠️',verifyL:'Prüfen',},
+es:{tag:'Herramientas de seguridad — 100% en tu navegador',tabH:'Cabeceras',tabC:'Auditoría',
+hT:'🔒 Verificación de cabeceras',hS:'Califica las cabeceras HTTP de tu sitio. Ningún dato sale de tu dispositivo.',
+btnScan:'Escanear',proxyNote:'<b>Nota:</b> el escaneo auto lee cabeceras visibles vía proxy público (CORS). Algunas (ej. <b>Set-Cookie</b>) son invisibles — pega la salida cURL abajo.',
+curlBtn:'Ver comando cURL',orManual:'o pega las cabeceras manualmente:',btnAnalyze:'Analizar',
+gradeL:'Nota',fixL:'Solución',dlBtn:'Descargar (.md)',
+c_https:'Uso HTTPS',c_hsts:'Strict-Transport-Security (HSTS)',c_csp:'Content-Security-Policy (CSP)',c_xfo:'X-Frame-Options',c_xcto:'X-Content-Type-Options',c_ref:'Referrer-Policy',c_perm:'Permissions-Policy',c_coop:'Cross-Origin (COOP/COEP/CORP)',c_leak:'Cabeceras que filtran info',
+st_p:'OK',st_w:'DÉBIL',st_f:'FALTA',
+cT:'📜 Auditoría de contratos (Solidity)',cS:'Pega o sube Solidity — 11 patrones comunes línea por línea. Pre-análisis auto; auditoría pro obligatoria antes de mainnet.',
+btnDemo:'Cargar contrato vulnerable',btnUpload:'Subir archivo (.sol)',btnAudit:'Auditar',
+verdict:'Veredicto',sev_high:'ALTA',sev_med:'MEDIA',sev_low:'BAJA',found:'hallazgos',clean:'Limpio! Sin patrones — auditoría pro recomendada igualmente.',
+foot:'HexShield — herramientas defensivas gratis. El código nunca sale de tu dispositivo.',
+curlCmd:'curl -sI https://tu-sitio.com',copied:'Copiado ✅',needUrl:'URL válida primero ⚠️',needCode:'Pega código ⚠️',scanning:'Escaneando...',fetchFail:'Lectura auto fallida. Pega la salida cURL.',adHere:'Anúnciate aquí — contacto',proT:'💎 Informes Pro',proSub:'Resumen gratis. PDF detallado + soluciones — pago único.',proHd:'Hoja de ruta + configs nginx/Apache/Cloudflare',proCd:'Plan de riesgos + exportación',pf1:'Descargar/imprimir PDF',pf2:'Soluciones paso a paso',pf3:'Pago único',buyBtn:'Comprar — $',payM:'Pagar: BTC o USDT',setupPay:'Dirección USDT pronto — paga en BTC.',txPh2:'TXID (prueba)',unlockBtn:'Pagué — Desbloquear',proOpen:'Abrir informe',printBtn:'Imprimir / PDF',lockedMsg:'Informe bloqueado — desbloquea primero.',liveL:'tasa live',ownerL:'Owner',ownerPh:'Contraseña',noSales:'Sin ventas.',needScan:'Escanea primero ⚠️',verifyL:'Verificar',}};
+const F_TXT={
+'pragma-float':{t:{tr:'Kayan pragma sürümü',ar:'إصدار pragma عائم',en:'Floating pragma version'},d:{tr:'Derleyici sürümü kilitli değil (^, >, <). Farklı sürümler farklı bytecode üretir.',ar:'إصدار المترجم غير مقفل (^, >, <) وقد ينتج بايت كود مختلفاً.',en:'Compiler version not locked (^, >, <). Different versions may produce different bytecode.'},f:'pragma solidity 0.8.24;'},
+'old-solc':{t:{tr:'Eski derleyici + SafeMath yok',ar:'مترجم قديم بدون SafeMath',en:'Old compiler without SafeMath'},d:{tr:'0.8 öncesi sürümlerde taşma/eksilme kontrolü yoktur ve SafeMath kullanılmamış.',ar:'إصدارات ما قبل 0.8 لا تتحقق من الفيض ولا تستخدم SafeMath.',en:'Pre-0.8 has no overflow checks and SafeMath is not used.'},f:'pragma solidity ^0.8.0; // yerleşik taşma koruması'},
+'txorigin':{t:{tr:'tx.origin kullanımı',ar:'استخدام tx.origin',en:'tx.origin usage'},d:{tr:'Kimlik doğrulamada tx.origin, oltalama ile atlatılabilir.',ar:'استخدام tx.origin للمصادقة يمكن تجاوزه بالتصيد.',en:'tx.origin for auth can be bypassed via phishing.'},f:'require(msg.sender == owner);'},
+'reentrancy':{t:{tr:'Reentrancy adayı (dış çağrı)',ar:'احتمال إعادة الدخول',en:'Reentrancy candidate (external call)'},d:{tr:'Bakiye güncellenmeden önce dış çağrı yapılıyor. Checks-Effects-Interactions + guard kullanın.',ar:'استدعاء خارجي قبل تحديث الرصيد. استخدم نمط الفحص-التأثير-التفاعل مع الحماية.',en:'External call before state update. Use Checks-Effects-Interactions + guard.'},f:'import "@openzeppelin/contracts/security/ReentrancyGuard.sol"; // + nonReentrant'},
+'unchecked':{t:{tr:'Kontrolsüz düşük seviye çağrı',ar:'استدعاء منخفض المستوى دون تحقق',en:'Unchecked low-level call'},d:{tr:'send/call dönüş değeri doğrulanmamış — sessiz başarısızlık riski.',ar:'قيمة الإرجاع غير متحقق منها — خطر فشل صامت.',en:'Return value not checked — silent failure risk.'},f:'(bool ok, ) = addr.call{value: x}(""); require(ok);'},
+'delegatecall':{t:{tr:'delegatecall kullanımı',ar:'استخدام delegatecall',en:'delegatecall usage'},d:{tr:'Hedef kontratın kodu sizin storage\u2019unuzda çalışır — son derece riskli.',ar:'كود العقد الهدف يعمل على تخزينك — خطير جداً.',en:'Target code runs on your storage — extremely risky.'},f:'// Kaçının veya hedefi whitelist ile sabitleyin'},
+'selfdestruct':{t:{tr:'selfdestruct erişimi',ar:'صلاحية selfdestruct',en:'selfdestruct access'},d:{tr:'Kontratı yok eden fonksiyon sıkı kısıtlanmalı (onlyOwner + timelock).',ar:'يجب تقييد دالة التدمير (onlyOwner + قفل زمني).',en:'Must be restricted (onlyOwner + timelock).'},f:'function kill() public onlyOwner { selfdestruct(payable(owner)); }'},
+'timestamp':{t:{tr:'block.timestamp bağımlılığı',ar:'الاعتماد على الوقت',en:'block.timestamp dependence'},d:{tr:'Madencilerce oynanabilir; rastgelelik/kritik mantıkta kullanmayın.',ar:'يمكن التلاعب به؛ لا تستخدمه للعشوائية أو المنطق الحرج.',en:'Miner-manipulable; avoid for randomness/critical logic.'},f:'// block.number veya oracle kullanın'},
+'mint':{t:{tr:'Korumasız mint fonksiyonu',ar:'دالة سك غير محمية',en:'Unprotected mint function'},d:{tr:'mint fonksiyonunda erişim kontrolü görünmüyor.',ar:'لا يوجد تحكم وصول ظاهر على دالة السك.',en:'No visible access control on mint.'},f:'function mint(...) public onlyOwner { ... }'},
+'ecrecover':{t:{tr:'Ham ecrecover kullanımı',ar:'استخدام ecrecover الخام',en:'Raw ecrecover usage'},d:{tr:'İmza esnekliği (malleability) riski — OZ ECDSA kullanın.',ar:'خطر مرونة التوقيع — استخدم OZ ECDSA.',en:'Signature malleability risk — use OZ ECDSA.'},f:'import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";'},
+'old-ctor':{t:{tr:'Eski stil constructor',ar:'كونستراكتر بالنمط القديم',en:'Old-style constructor'},d:{tr:'Kontrat adıyla fonksiyon — yeni sürümlerde çalışmaz/yanlış olur.',ar:'دالة باسم العقد — لا تعمل في الإصدارات الحديثة.',en:'Contract-named function — broken in modern versions.'},f:'constructor() { ... }'}};
+[['pragma-float',['Pragma flottant','Version non verrouillée (^, >, <) — bytecodes divergents possibles.'],['Fließendes Pragma','Version nicht fixiert (^, >, <) — unterschiedlicher Bytecode möglich.'],['Pragma flotante','Versión no fijada (^, >, <) — bytecode distinto posible.']],
+['old-solc',['Vieux compilateur sans SafeMath','Pré-0.8 sans vérification de débordement ni SafeMath.'],['Alter Compiler ohne SafeMath','Pre-0.8 ohne Overflow-Schutz und ohne SafeMath.'],['Compilador viejo sin SafeMath','Pre-0.8 sin protección de desborde ni SafeMath.']],
+['txorigin',['Usage de tx.origin','tx.origin pour l\u2019authentification contournable par phishing.'],['tx.origin-Nutzung','tx.origin zur Auth per Phishing umgehbar.'],['Uso de tx.origin','tx.origin para auth evadible con phishing.']],
+['reentrancy',['Reentrancy possible','Appel externe avant mise à jour — Checks-Effects-Interactions + garde.'],['Reentrancy-Kandidat','Externer Call vor Update — Checks-Effects-Interactions + Guard.'],['Candidato a reentrancy','Llamada externa antes de actualizar — Checks-Effects-Interactions + guard.']],
+['unchecked',['Appel bas niveau non vérifié','Retour de send/call non vérifié — risque d\u2019échec silencieux.'],['Ungeprüfter Low-Level-Call','Rückgabe nicht geprüft — stilles Scheitern möglich.'],['Llamada sin verificar','Retorno no verificado — riesgo de fallo silencioso.']],
+['delegatecall',['Usage de delegatecall','Le code cible s\u2019exécute sur votre stockage — très risqué.'],['delegatecall-Nutzung','Zielcode läuft auf Ihrem Storage — extrem riskant.'],['Uso de delegatecall','El código objetivo corre en tu storage — muy riesgoso.']],
+['selfdestruct',['Accès selfdestruct','Doit être restreint (onlyOwner + timelock).'],['selfdestruct-Zugriff','Muss beschränkt sein (onlyOwner + Timelock).'],['Acceso a selfdestruct','Debe restringirse (onlyOwner + timelock).']],
+['timestamp',['Dépendance à block.timestamp','Manipulable par les mineurs ; pas pour l\u2019aléatoire.'],['block.timestamp-Abhängigkeit','Miner-manipulierbar; nicht für Zufall.'],['Dependencia de block.timestamp','Manipulable; no para aleatoriedad.']],
+['mint',['Fonction mint non protégée','Pas de contrôle d\u2019accès visible sur mint.'],['Ungeschützte Mint-Funktion','Keine Zugangskontrolle auf mint sichtbar.'],['Mint sin protección','Sin control de acceso visible en mint.']],
+['ecrecover',['ecrecover brut','Risque de malléabilité — utilisez OZ ECDSA.'],['Rohes ecrecover','Malleability-Risiko — OZ ECDSA nutzen.'],['ecrecover crudo','Riesgo de maleabilidad — usa OZ ECDSA.']],
+['old-ctor',['Constructeur à l\u2019ancienne','Fonction nommée comme le contrat — cassé sur versions modernes.'],['Konstruktor alter Art','Vertragsbenannte Funktion — in modern defekt.'],['Constructor antiguo','Función con nombre del contrato — roto en modernas.']]
+].forEach(([id,fr,de,es])=>{F_TXT[id].t.fr=fr[0];F_TXT[id].d.fr=fr[1];F_TXT[id].t.de=de[0];F_TXT[id].d.de=de[1];F_TXT[id].t.es=es[0];F_TXT[id].d.es=es[1];});
+let lang='en';
+const t=k=>(T[lang]&&T[lang][k])||T.en[k]||k;
+function setLang(v){lang=v;document.documentElement.lang=v;document.documentElement.dir=(v==='ar')?'rtl':'ltr';document.getElementById('langSel').value=v;
+document.querySelectorAll('[data-i]').forEach(e=>{e.innerHTML=t(e.dataset.i);});
+document.getElementById('hRes').innerHTML='';document.getElementById('cRes').innerHTML='';document.getElementById('dlBtn').style.display='none';}
+function tab(w){['H','C','P'].forEach(k=>{document.getElementById('tab'+k).classList.toggle('on',w===k);document.getElementById('p'+k).classList.toggle('on',w===k);});}
+function norm(u){u=(u||'').trim();if(!u)return '';if(!/^https?:\/\//i.test(u))u='https://'+u;return u;}
+function parseHdr(text){const h={};(text||'').split('\n').forEach(l=>{const i=l.indexOf(':');if(i>0){const k=l.slice(0,i).trim().toLowerCase(),v=l.slice(i+1).trim();if(k&&v)h[k]=h[k]?h[k]+'; '+v:v;}});return h;}
+function analyze(h,url){
+const g=k=>h[k]||'';
+const out=[];
+const isHttps=/^https:\/\//i.test(url||'');
+out.push({id:'https',st:isHttps?'p':'f',w:0,detail:isHttps?'OK':url});
+let s=100;
+const put=(id,st,w,detail,fix)=>{out.push({id,st,w,detail,fix});if(st!=='p')s-=w;};
+// HSTS
+(()=>{const v=g('strict-transport-security');if(!v)return put('hsts','f',20,'missing','Strict-Transport-Security: max-age=63072000; includeSubDomains; preload');
+const m=v.match(/max-age\s*=\s*(\d+)/i);const ma=m?+m[1]:0;
+if(ma>=31536000){const extra=[];if(!/includesubdomains/i.test(v))extra.push('includeSubDomains?');if(!/preload/i.test(v))extra.push('preload?');
+return put('hsts',extra.length?'w':'p',20,'max-age='+ma+(extra.length?' | '+extra.join(' '):''),'Strict-Transport-Security: max-age=63072000; includeSubDomains; preload');}
+return put('hsts','w',20,'max-age='+ma+' (<31536000)','Strict-Transport-Security: max-age=63072000; includeSubDomains');})();
+// CSP
+(()=>{const v=g('content-security-policy');if(!v)return put('csp','f',20,'missing',"Content-Security-Policy: default-src 'self'");
+const bad=[];if(/unsafe-inline/i.test(v))bad.push('unsafe-inline');if(/unsafe-eval/i.test(v))bad.push('unsafe-eval');if(/(default|script)-src[^;]*\*/.test(v))bad.push('wildcard');if(/data:/i.test(v))bad.push('data:');
+return put('csp',bad.length?'w':'p',20,bad.length?bad.join(', '):'present',"Content-Security-Policy: default-src 'self'; object-src 'none'; base-uri 'self'");})();
+// XFO
+(()=>{const v=g('x-frame-options');if(!v)return put('xfo','f',10,'missing','X-Frame-Options: DENY');
+if(/deny|sameorigin/i.test(v))return put('xfo','p',10,v,'X-Frame-Options: DENY');
+return put('xfo','w',10,v,'X-Frame-Options: DENY');})();
+// XCTO
+(()=>{const v=g('x-content-type-options');if(!v)return put('xcto','f',10,'missing','X-Content-Type-Options: nosniff');
+return put('xcto',/nosniff/i.test(v)?'p':'w',10,v,'X-Content-Type-Options: nosniff');})();
+// Referrer
+(()=>{const v=g('referrer-policy');if(!v)return put('ref','f',10,'missing','Referrer-Policy: strict-origin-when-cross-origin');
+return put('ref',/unsafe-url/i.test(v)?'w':'p',10,v,'Referrer-Policy: strict-origin-when-cross-origin');})();
+// Permissions
+(()=>{const v=g('permissions-policy')||g('feature-policy');if(!v)return put('perm','f',10,'missing','Permissions-Policy: camera=(), microphone=(), geolocation=()');
+return put('perm','p',10,v,'Permissions-Policy: camera=(), microphone=(), geolocation=()');})();
+// COOP/COEP/CORP
+(()=>{const a=g('cross-origin-opener-policy'),b=g('cross-origin-embedder-policy'),c=g('cross-origin-resource-policy');
+if(a&&b)return put('coop','p',10,'COOP+COEP','Cross-Origin-Opener-Policy: same-origin');
+if(a||b||c)return put('coop','w',10,[a,b,c].filter(Boolean).join(' | '),'Cross-Origin-Opener-Policy: same-origin');
+return put('coop','f',10,'missing','Cross-Origin-Opener-Policy: same-origin');})();
+// Leak
+(()=>{const leaks=['server','x-powered-by','x-aspnet-version','x-aspnetmvc-version'].filter(k=>g(k));
+if(!leaks.length)return put('leak','p',0,'hidden','(sunucu başlıklarını gizleyin)');
+return put('leak','w',Math.min(10,leaks.length*5),leaks.map(k=>k+': '+g(k)).join(' | '),'(sunucu başlıklarını gizleyin)');})();
+s=Math.max(0,s);
+const grade=s>=90?'A+':s>=80?'A':s>=70?'B':s>=60?'C':s>=45?'D':'F';
+return {checks:out,score:s,grade};
+}
+function renderH(r,url){
+lastH={r,url};
+const gc=r.grade[0]==='A'?'gA':r.grade==='B'?'gB':r.grade==='C'?'gC':'gF';
+let h=`<div class="grade"><div class="badge ${gc}">${r.grade}</div><div><b>${t('gradeL')}: ${r.score}/100</b><br><small style="color:var(--mut)">${url}</small></div></div>`;
+h+=r.checks.map(c=>{const cls=c.st==='p'?'p':c.st==='w'?'w':'f';
+return `<div class="check"><div class="hd"><span class="dot ${cls}"></span>${t('c_'+c.id)} — ${t('st_'+c.st)}</div><small>${c.detail}</small>${c.fix?`<code>${t('fixL')}: ${c.fix}</code>`:''}</div>`;}).join('');
+document.getElementById('hRes').innerHTML=h;
+}
+async function autoCheck(){
+const u=norm(document.getElementById('urlIn').value);
+if(!u){toast(t('needUrl'));return;}
+document.getElementById('hRes').innerHTML='<p class="sub">'+t('scanning')+'</p>';
+try{
+const r=await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(u));
+if(!r.ok)throw 0;
+const h={};r.headers.forEach((v,k)=>{h[k.toLowerCase()]=v;});
+renderH(analyze(h,u),u+' (proxy)');
+}catch(e){document.getElementById('hRes').innerHTML='<div class="note">'+t('fetchFail')+'</div>';}
+}
+function manualCheck(){const u=norm(document.getElementById('urlIn').value)||'manual';renderH(analyze(parseHdr(document.getElementById('hdrIn').value),u),u);}
+function fillCurl(){document.getElementById('curlBox').innerHTML='<div class="note"><code style="color:var(--grn)">'+t('curlCmd')+'</code><br><button class="alt" onclick="navigator.clipboard.writeText(\''+t('curlCmd')+'\');toast(\''+t('copied')+'\')">'+t('copied')+'</button></div>';}
+function mk(id,sev,line,code){return {id,sev,line,code};}
+function audit(src){
+const lines=src.split('\n'),F=[];
+const hasGuard=/ReentrancyGuard|nonReentrant/.test(src);
+const hasSafe=/SafeMath|using\s+SafeMath/.test(src);
+lines.forEach((raw,i)=>{const ln=i+1,l=raw.trim();
+if(!l||l.startsWith('//'))return;
+let m;
+if(m=l.match(/^pragma\s+solidity\s+([^;]+);?/)){const v=m[1].trim();const ver=v.match(/(\d+)\.(\d+)\.(\d+)/)||[];
+if(/[\^<>]/.test(v))F.push(mk('pragma-float','med',ln,l));
+if(ver.length&&+ver[1]===0&&+ver[2]<8&&!hasSafe)F.push(mk('old-solc','high',ln,l));}
+if(/tx\.origin/.test(l))F.push(mk('txorigin','high',ln,l));
+if(/\.call\s*(\{\s*value|\.value\s*\()/.test(l)||/\.call\.value\s*\(/.test(l))F.push(mk('reentrancy',hasGuard?'med':'high',ln,l));
+if(/\.(send|call|delegatecall|callcode)\s*\(/.test(l)&&!/delegatecall/.test(l)&&!/require\s*\(|assert\s*\(|if\s*\(/.test(l))F.push(mk('unchecked','med',ln,l));
+if(/delegatecall/.test(l))F.push(mk('delegatecall','high',ln,l));
+if(/selfdestruct|suicide\s*\(/.test(l))F.push(mk('selfdestruct','high',ln,l));
+if(/block\.timestamp|\bnow\b/.test(l))F.push(mk('timestamp','low',ln,l));
+if(/function\s+mint\s*\(/.test(l)&&!/onlyOwner|onlyRole|AccessControl/i.test(l))F.push(mk('mint','high',ln,l));
+if(/ecrecover\s*\(/.test(l))F.push(mk('ecrecover','med',ln,l));
+});
+if(!/constructor\s*\(/.test(src)){const cm=src.match(/function\s+([A-Z]\w*)\s*\(/);if(cm&&new RegExp('contract\\s+'+cm[1]).test(src))F.push(mk('old-ctor','med',1,cm[0].slice(0,60)));}
+const pen={high:20,med:10,low:5};let s=100;F.forEach(f=>s-=pen[f.sev]);s=Math.max(0,s);
+return {findings:F,score:s};
+}
+const DEMO=`pragma solidity ^0.6.0;
+contract VulnerableBank {
+  mapping(address => uint) public balances;
+  address public owner;
+  constructor() public { owner = msg.sender; }
+  function deposit() public payable { balances[msg.sender] += msg.value; }
+  function withdraw(uint _a) public {
+    require(balances[msg.sender] >= _a);
+    (bool ok, ) = msg.sender.call.value(_a)("");
+    require(ok);
+    balances[msg.sender] -= _a;
+  }
+  function mint(address to, uint amt) public { balances[to] += amt; }
+  function bye() public {
+    require(tx.origin == owner, "no");
+    selfdestruct(msg.sender);
+  }
+  function lucky() public view returns (bool) { return block.timestamp % 2 == 0; }
+}`;
+function loadDemo(){document.getElementById('codeIn').value=DEMO;}
+function loadFile(el){const f=el.files&&el.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{document.getElementById('codeIn').value=r.result;};r.readAsText(f);}
+let lastAudit=null;
+function fTx(id){const e=F_TXT[id]||{t:{},d:{},f:''};return {t:(e.t[lang]||e.t.en||id),d:(e.d[lang]||e.d.en||''),f:e.f||''};}
+function fTxE(id){const e=F_TXT[id]||{t:{},d:{},f:''};return {t:(e.t.en||id),d:(e.d.en||''),f:e.f||''};}
+function runAudit(){
+const src=document.getElementById('codeIn').value;
+if(!src.trim()){toast(t('needCode'));return;}
+const r=audit(src);lastAudit=r;
+const gc=r.score>=80?'gA':r.score>=60?'gB':r.score>=40?'gC':'gF';
+let h=`<div class="grade"><div class="badge ${gc}">${r.score}</div><div><b>${t('verdict')}: ${r.findings.length} ${t('found')}</b></div></div>`;
+if(!r.findings.length)h+=`<div class="okbox">${t('clean')}</div>`;
+h+=r.findings.map(f=>{const tx=F_TXT[f.id][lang]||fTx(f.id);
+return `<div class="find ${f.sev}"><span class="t">${tx.t}</span><span class="sev">${t('sev_'+f.sev)}</span><span class="ln"> · L${f.line}</span><div style="margin-top:4px">${tx.d}</div><code>${(f.code||'').slice(0,160)}</code><div class="fx">→ ${tx.f}</div></div>`;}).join('');
+document.getElementById('cRes').innerHTML=h;
+document.getElementById('dlBtn').style.display=r.findings.length?'inline-block':'none';
+}
+function dlReport(){
+if(!lastAudit)return;
+const L=['# HexShield Contract Audit','Score: '+lastAudit.score+'/100','Findings: '+lastAudit.findings.length,''];
+lastAudit.findings.forEach(f=>{const tx=fTxE(f.id);L.push(`## [${f.sev.toUpperCase()}] ${tx.t} (L${f.line})`,tx.d,'```solidity',f.code,'```','Fix: '+tx.f,'');});
+const b=new Blob([L.join('\n')],{type:'text/markdown'});const a=document.createElement('a');
+a.href=URL.createObjectURL(b);a.download='hexshield-audit.md';a.click();
+}
+function toast(m){let d=document.getElementById('t');if(!d){d=document.createElement('div');d.id='t';d.style.cssText='position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:12px 25px;border-radius:25px;z-index:200;font-size:14px';document.body.appendChild(d);}d.textContent=m;d.style.display='block';clearTimeout(d._h);d._h=setTimeout(()=>d.style.display='none',2200);}
+const CONFIG={
+ads:{client:'',slot:'',carbonServe:'',carbonPlacement:''},
+pay:{btc:'bc1q8dhtdrndxsl70e97t8grydfe6pjue37zrhzf6c',usdt_trc20:'',usdt_erc20:''},
+prices:{headers:5,contract:9},
+ownerHash:'5dc25a61051965b4ea96a73701a3ba5e74a2be164b29347071471d9d2cc9dede'};
+let BTCP=83000,lastH=null,payCtx=null,payMethod='btc';
+fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd').then(r=>r.json()).then(j=>{if(j&&j.bitcoin&&j.bitcoin.usd){BTCP=j.bitcoin.usd;updPrices();}}).catch(()=>{});
+function btcEq(usd){return (usd/BTCP).toFixed(6)+' BTC';}
+function updPrices(){const a=document.getElementById('prH'),b=document.getElementById('prC');if(a)a.innerHTML='≈ '+btcEq(CONFIG.prices.headers)+' <small>· '+t('liveL')+'</small>';if(b)b.innerHTML='≈ '+btcEq(CONFIG.prices.contract)+' <small>· '+t('liveL')+'</small>';}
+function loadAds(){const A=CONFIG.ads,top=document.getElementById('adTop');if(!top)return;
+if(A.client){const s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+A.client;s.crossOrigin='anonymous';document.head.appendChild(s);
+top.innerHTML='<ins class="adsbygoogle" style="display:block" data-ad-client="'+A.client+'" data-ad-slot="'+(A.slot||'')+'" data-ad-format="auto" data-full-width-responsive="true"></ins>';
+try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}}
+else if(A.carbonServe){const s=document.createElement('script');s.async=true;s.id='_carbonads_js';s.src='//cdn.carbonads.com/carbon.js?serve='+A.carbonServe+'&placement='+A.carbonPlacement;top.innerHTML='';top.appendChild(s);}}
+function isPro(k){try{return !!JSON.parse(localStorage.getItem('hs_pro_'+k)||'null');}catch(e){return false;}}
+function buyPro(tool){
+const hasScan=tool==='headers'?!!lastH:!!lastAudit;
+if(!hasScan){toast(t('needScan'));tab(tool==='headers'?'H':'C');return;}
+payCtx={tool,price:CONFIG.prices[tool]};payMethod='btc';renderPay();
+document.getElementById('payModal').classList.add('show');
+}
+function closePay(){document.getElementById('payModal').classList.remove('show');}
+function renderPay(){
+const p=payCtx;if(!p)return;const P=CONFIG.pay;
+const usdt=[['USDT-TRC20',P.usdt_trc20],['USDT-ERC20',P.usdt_erc20]].filter(x=>x[1]);
+let h=`<h3 style="color:var(--grn)">💎 ${p.tool==='headers'?'Headers Pro':'Contract Pro'} — $${p.price} <small style="color:var(--mut)">≈ ${btcEq(p.price)}</small></h3><div style="font-size:13px;color:var(--mut)">${t('payM')}</div><div class="mrow"><button id="pmB" class="${payMethod==='btc'?'on':''}" onclick="payMethod='btc';renderPay()">₿ BTC</button>`;
+usdt.forEach((u,i)=>{h+=`<button id="pmU${i}" class="${payMethod===u[0]?'on':''}" onclick="payMethod='${u[0]}';renderPay()">${u[0]}</button>`;});
+h+='</div>';
+if(payMethod==='btc'){h+=`<div class="addrbox">${P.btc}</div><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent('bitcoin:'+P.btc)}" width="130" height="130" style="border-radius:10px;background:#fff;padding:6px" alt="QR"><div style="font-size:13px;margin-top:6px">≈ ${btcEq(p.price)} <small style="color:var(--mut)">· ${t('liveL')}</small> <button class="alt" onclick="copyTxt('${P.btc}')">${t('copied')}</button></div>`;}
+else{const ad=usdt.find(u=>u[0]===payMethod)[1];h+=`<div class="addrbox">${ad}</div><div style="font-size:13px">$${p.price} ${payMethod}</div>`;}
+if(!usdt.length)h+=`<div class="note">${t('setupPay')}</div>`;
+h+=`<input type="text" id="payTx" placeholder="${t('txPh2')}" style="width:100%;margin-top:8px"><div class="row"><button class="go" onclick="unlockPro()">${t('unlockBtn')}</button><button class="alt" onclick="closePay()">✕</button></div>`;
+document.getElementById('payBody').innerHTML=h;
+}
+function copyTxt(x){if(navigator.clipboard)navigator.clipboard.writeText(x).then(()=>toast(t('copied')));else toast(x);}
+function unlockPro(){
+const tx=((document.getElementById('payTx')||{}).value||'').trim();
+if(tx.length<6){toast(t('txPh2'));return;}
+try{localStorage.setItem('hs_pro_'+payCtx.tool,JSON.stringify({tx,time:new Date().toISOString()}));
+const O=JSON.parse(localStorage.getItem('hs_orders')||'[]');O.unshift({tool:payCtx.tool,usd:payCtx.price,method:payMethod,tx,time:new Date().toLocaleString()});localStorage.setItem('hs_orders',JSON.stringify(O));}catch(e){}
+closePay();tab('P');openPro(payCtx.tool);toast(t('copied'));
+}
+function openPro(tool){
+if(!isPro(tool)){tab('P');document.getElementById('proView').innerHTML='<div class="note">'+t('lockedMsg')+'</div>';return;}
+const box=document.getElementById('proView');let h='';
+if(tool==='headers'&&lastH){h=proHeaders(lastH);}else if(tool==='contract'&&lastAudit){h=proContract(lastAudit);}
+else h='<div class="note">'+t('needScan')+'</div>';
+box.innerHTML=h+`<div class="row"><button class="go" onclick="printPro()">🖨️ ${t('printBtn')||'Print'}</button></div>`;
+box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function prio(h){const bad=h.checks.filter(c=>c.st!=='p').sort((a,b)=>b.w-a.w);
+return bad.map((c,i)=>`<div class="check"><div class="hd"><span class="dot ${c.st==='f'?'f':'w'}"></span>#${i+1} ${t('c_'+c.id)} (−${c.w})</div><small>${c.detail}</small>${c.fix?`<code>${c.fix}</code>`:''}</div>`).join('')||'<div class="okbox">100/100 🎉</div>';}
+function nginxConf(h){const m={};h.checks.forEach(c=>{if(c.st!=='p')m[c.id]=1;});let s='';
+if(m.hsts)s+='add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;\n';
+if(m.xfo)s+='add_header X-Frame-Options "DENY" always;\n';
+if(m.xcto)s+='add_header X-Content-Type-Options "nosniff" always;\n';
+if(m.ref)s+='add_header Referrer-Policy "strict-origin-when-cross-origin" always;\n';
+if(m.perm)s+='add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;\n';
+if(m.coop)s+='add_header Cross-Origin-Opener-Policy "same-origin" always;\n';
+if(m.csp)s+='add_header Content-Security-Policy "default-src \'self\'; object-src \'none\'; base-uri \'self\'" always;\n';
+return s||'# all headers present ✔';}
+function proHeaders(o){const r=o.r;
+return `<h3>💎 Headers Pro — ${o.url}</h3><div class="grade"><div class="badge ${r.grade[0]==='A'?'gA':r.grade==='B'?'gB':r.grade==='C'?'gC':'gF'}">${r.grade}</div><div><b>${r.score}/100</b></div></div><h4>${t('fixL')}</h4>${prio(r)}<h4 style="margin-top:10px">nginx</h4><code>${nginxConf(r)}</code>`;}
+function proContract(o){
+const by={high:[],med:[],low:[]};o.findings.forEach(f=>by[f.sev].push(f));
+const sec=(arr)=>arr.map(f=>{const tx=F_TXT[f.id][lang]||fTx(f.id);return `<div class="find ${f.sev}"><span class="t">${tx.t}</span><span class="ln"> · L${f.line}</span><div>${tx.d}</div><code>${(f.code||'').slice(0,160)}</code><div class="fx">→ ${tx.f}</div><div style="font-size:12px;color:var(--mut)">☑ ${t('verifyL')}: ${tx.t} — re-test + mainnet öncesi profesyonel denetim</div></div>`;}).join('');
+return `<h3>💎 Contract Pro — ${t('verdict')}: ${o.score}/100</h3><p>🔴 ${by.high.length} · 🟡 ${by.med.length} · 🔵 ${by.low.length}</p>${sec(by.high)}${sec(by.med)}${sec(by.low)}`;
+}
+function printPro(){const v=document.getElementById('proView').innerHTML;
+document.getElementById('printArea').innerHTML='<div class="pr-doc"><h2>HexShield Pro Report — '+new Date().toLocaleString()+'</h2>'+v+'</div>';
+window.print();}
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+function ownerView(e){if(e)e.preventDefault();
+document.getElementById('payBody').innerHTML=`<h3>${t('ownerL')}</h3><input type="password" id="owP" placeholder="${t('ownerPh')}" style="width:100%"><div class="row"><button class="go" onclick="ownerGo()">OK</button></div><div id="owL"></div>`;
+document.getElementById('payModal').classList.add('show');}
+async function ownerGo(){const h=await sha(document.getElementById('owP').value);
+if(h!==CONFIG.ownerHash){document.getElementById('owL').innerHTML='⚠️';return;}
+let O=[];try{O=JSON.parse(localStorage.getItem('hs_orders')||'[]');}catch(e){}
+document.getElementById('owL').innerHTML=O.length?O.map(o=>`<div class="check"><b>$${o.usd} ${o.tool}</b> · ${o.method}<br><small>${o.tx} · ${o.time}</small></div>`).join(''):`<p>${t('noSales')}</p>`;}
+setLang('en');
+</script>
+</body>
+</html>
