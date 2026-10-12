@@ -218,7 +218,7 @@ const F_TXT={
 ['txorigin',['Usage de tx.origin','tx.origin pour l\u2019authentification contournable par phishing.'],['tx.origin-Nutzung','tx.origin zur Auth per Phishing umgehbar.'],['Uso de tx.origin','tx.origin para auth evadible con phishing.']],
 ['reentrancy',['Reentrancy possible','Appel externe avant mise à jour — Checks-Effects-Interactions + garde.'],['Reentrancy-Kandidat','Externer Call vor Update — Checks-Effects-Interactions + Guard.'],['Candidato a reentrancy','Llamada externa antes de actualizar — Checks-Effects-Interactions + guard.']],
 ['unchecked',['Appel bas niveau non vérifié','Retour de send/call non vérifié — risque d\u2019échec silencieux.'],['Ungeprüfter Low-Level-Call','Rückgabe nicht geprüft — stilles Scheitern möglich.'],['Llamada sin verificar','Retorno no verificado — riesgo de fallo silencioso.']],
-['delegatecall',['Usage de delegatecall','Le code cible s\u2019exécute sur votre stockage — très risqué.'],['delegatecall-Nutzung','Zielcode läuft auf Ihrem Storage — extrem riskant.'],['Uso de delegatecall','El código objetivo corre en tu storage — muy riesgoso.']],
+['delegatecall',['Usage de delegatecall','Le code cible s\u2019exécute sur votre stockage — très risqué.'],['delegatecall-Nutzung','Zielcode läuft auf Ihrem Storage — extrem riskant.'],['Uso de delegatecall','El código objetivo corre en tu storage �� muy riesgoso.']],
 ['selfdestruct',['Accès selfdestruct','Doit être restreint (onlyOwner + timelock).'],['selfdestruct-Zugriff','Muss beschränkt sein (onlyOwner + Timelock).'],['Acceso a selfdestruct','Debe restringirse (onlyOwner + timelock).']],
 ['timestamp',['Dépendance à block.timestamp','Manipulable par les mineurs ; pas pour l\u2019aléatoire.'],['block.timestamp-Abhängigkeit','Miner-manipulierbar; nicht für Zufall.'],['Dependencia de block.timestamp','Manipulable; no para aleatoriedad.']],
 ['mint',['Fonction mint non protégée','Pas de contrôle d\u2019accès visible sur mint.'],['Ungeschützte Mint-Funktion','Keine Zugangskontrolle auf mint sichtbar.'],['Mint sin protección','Sin control de acceso visible en mint.']],
@@ -449,5 +449,9 @@ let O=[];try{O=JSON.parse(localStorage.getItem('hs_orders')||'[]');}catch(e){}
 document.getElementById('owL').innerHTML=O.length?O.map(o=>`<div class="check"><b>$${o.usd} ${o.tool}</b> · ${o.method}<br><small>${o.tx} · ${o.time}</small></div>`).join(''):`<p>${t('noSales')}</p>`;}
 setLang('en');
 </script>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
